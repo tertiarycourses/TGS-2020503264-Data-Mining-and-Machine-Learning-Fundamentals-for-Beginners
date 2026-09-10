@@ -3,6 +3,7 @@
 **Alignment:** LO2 · K1 · A1
 **Central-app workflow:** `Data audit & preparation`
 **Mock data:** `customer_quality.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

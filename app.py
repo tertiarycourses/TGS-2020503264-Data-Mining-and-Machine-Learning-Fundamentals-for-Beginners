@@ -67,6 +67,9 @@ st.markdown("""
   div[data-baseweb="select"] > div, div[data-baseweb="input"] > div {background:white!important;color:#172B4D!important;min-height:46px;}
   .stButton button,.stDownloadButton button,.stLinkButton a {min-height:44px;border-radius:10px;font-weight:700;transition:transform .16s ease,box-shadow .16s ease;}
   .stButton button:hover,.stDownloadButton button:hover,.stLinkButton a:hover {transform:translateY(-1px);box-shadow:0 5px 12px rgba(30,64,175,.14);}
+  .powered-by {color:#627D98;font-size:.86rem;text-align:center;margin:1.3rem 0 0;}
+  .powered-by a {color:#1E40AF;font-weight:700;text-decoration:none;}
+  .powered-by a:hover {text-decoration:underline;}
   button:focus-visible,a:focus-visible,input:focus-visible {outline:3px solid #93C5FD!important;outline-offset:2px;}
   @media (prefers-reduced-motion:reduce) {* {scroll-behavior:auto!important;transition:none!important;}}
   @media (max-width:800px) {
@@ -169,6 +172,11 @@ for lab in guide.labs:
 st.sidebar.link_button(
     "Course registration",
     "https://www.tertiarycourses.com.sg/wsq-data-mining-and-machine-learning-fundamentals-for-beginners.html",
+    use_container_width=True,
+)
+st.sidebar.link_button(
+    "Central Lab Portal",
+    "https://alfredang.github.io/data-mining-ml-labs/",
     use_container_width=True,
 )
 
@@ -345,3 +353,7 @@ elif workflow == "Anomaly detection":
 
 st.divider()
 st.caption("Outputs are learning evidence, not automatic business decisions. Verify data quality, assumptions, and error costs before acting.")
+st.markdown(
+    '<p class="powered-by">Powered by <a href="https://www.tertiaryinfotech.com/" target="_blank" rel="noopener">Tertiary Infotech Academy Pte Ltd</a></p>',
+    unsafe_allow_html=True,
+)

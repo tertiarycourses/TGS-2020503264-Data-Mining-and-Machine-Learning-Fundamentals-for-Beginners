@@ -3,6 +3,7 @@
 **Alignment:** LO6 · K8 · A4/A5
 **Central-app workflow:** `PCA & feature ranking`
 **Mock data:** `patient_profiles.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

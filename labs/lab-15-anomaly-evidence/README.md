@@ -3,6 +3,7 @@
 **Alignment:** LO1 · K1/K5 · A8
 **Central-app workflow:** `Anomaly detection`
 **Mock data:** `sensor_readings.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

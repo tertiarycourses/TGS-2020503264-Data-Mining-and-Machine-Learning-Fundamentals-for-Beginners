@@ -3,6 +3,7 @@
 **Alignment:** LO4 · K6/K7 · A7/A8
 **Central-app workflow:** `Classification`
 **Mock data:** `churn.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

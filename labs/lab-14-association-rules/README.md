@@ -3,6 +3,7 @@
 **Alignment:** LO7 · K9 · A3/A4
 **Central-app workflow:** `Association rules`
 **Mock data:** `market_basket.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

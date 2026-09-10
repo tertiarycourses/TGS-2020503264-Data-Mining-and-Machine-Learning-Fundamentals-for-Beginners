@@ -3,6 +3,7 @@
 **Alignment:** LO3 · K2/K10 · A2
 **Central-app workflow:** `Regression`
 **Mock data:** `housing_regression.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

@@ -3,6 +3,7 @@
 **Alignment:** LO5 · K3/K5 · A5/A6
 **Central-app workflow:** `Hierarchical clustering`
 **Mock data:** `patient_profiles.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

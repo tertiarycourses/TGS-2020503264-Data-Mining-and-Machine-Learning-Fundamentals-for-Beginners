@@ -3,6 +3,7 @@
 **Alignment:** LO2 · K1 · A1/A6
 **Central-app workflow:** `Join & aggregate`
 **Mock data:** `orders.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 

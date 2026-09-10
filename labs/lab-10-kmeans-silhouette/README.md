@@ -3,6 +3,7 @@
 **Alignment:** LO5 · K3/K5 · A5
 **Central-app workflow:** `Clustering`
 **Mock data:** `customer_clusters.csv`
+**Central Lab Portal:** [alfredang.github.io/data-mining-ml-labs](https://alfredang.github.io/data-mining-ml-labs/)
 
 ## Objective
 
