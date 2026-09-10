@@ -28,7 +28,7 @@ from ml_core import (
 )
 from workflow_catalog import WORKFLOW_GUIDES, WorkflowGuide
 
-st.set_page_config(page_title="Data Mining & ML Lab", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Data Mining & ML Lab", layout="wide", initial_sidebar_state="auto")
 st.markdown("""
 <style>
   :root {color-scheme: light;}
