@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import io
+from html import escape
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -25,18 +26,66 @@ from ml_core import (
     run_regression,
     silhouette_scan,
 )
+from workflow_catalog import WORKFLOW_GUIDES, WorkflowGuide
 
-st.set_page_config(page_title="Data Mining & ML Lab", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Data Mining & ML Lab", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
 <style>
-  .stApp {background: #f7faf9;} h1,h2,h3 {color:#102a43}
-  [data-testid="stMetric"] {background:white;border:1px solid #d9e2ec;border-radius:14px;padding:14px}
-  .lab-note {background:#e6fffa;border-left:5px solid #0f766e;padding:12px 16px;border-radius:8px}
+  :root {color-scheme: light;}
+  .stApp, [data-testid="stAppViewContainer"] {background:#F8FAFC;color:#172B4D;}
+  [data-testid="stHeader"] {background:rgba(248,250,252,.94);}
+  [data-testid="stSidebar"] {background:#F1F5F9;border-right:1px solid #D7E2F2;}
+  [data-testid="stSidebar"] > div:first-child {padding-top:1.35rem;}
+  .block-container {max-width:1280px;padding-top:1.8rem;padding-bottom:3rem;}
+  h1,h2,h3 {color:#102A43;letter-spacing:-.02em;}
+  p, li, label, [data-testid="stCaptionContainer"] {font-size:1rem;line-height:1.55;}
+  .course-hero {background:linear-gradient(135deg,#102A43 0%,#1E40AF 70%,#2563EB 100%);color:white;border-radius:20px;padding:28px 32px;margin-bottom:22px;box-shadow:0 14px 32px rgba(30,64,175,.16);}
+  .course-hero .tag {display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:5px 11px;font-size:.78rem;font-weight:700;letter-spacing:.08em;}
+  .course-hero h1 {color:white;font-size:clamp(1.75rem,3vw,2.65rem);margin:14px 0 8px;line-height:1.12;}
+  .course-hero p {color:#EAF2FF;margin:0;max-width:760px;}
+  .method-card {background:white;border:1px solid #DBEAFE;border-radius:18px;padding:24px 26px;margin-bottom:16px;box-shadow:0 5px 18px rgba(15,23,42,.05);}
+  .method-eyebrow,.section-kicker,.sidebar-kicker {color:#1E40AF;font-size:.76rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;}
+  .method-card h2 {font-size:1.8rem;margin:.35rem 0 .45rem;}
+  .method-summary {font-size:1.08rem;color:#334E68;margin:0 0 18px;max-width:980px;}
+  .guide-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+  .guide-item {background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:14px 15px;}
+  .guide-item strong {display:block;color:#102A43;margin-bottom:5px;}
+  .guide-item span {color:#486581;font-size:.92rem;line-height:1.48;}
+  .lab-strip {background:#FFF9ED;border:1px solid #F3D9A7;border-radius:14px;padding:15px 17px;margin:14px 0 18px;}
+  .lab-strip strong {color:#7C4700;}
+  .lab-pill {display:inline-block;background:white;color:#694100;border:1px solid #E8C47E;border-radius:999px;padding:5px 10px;margin:7px 6px 0 0;font-size:.86rem;font-weight:650;}
+  .how-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:8px;}
+  .how-step {border-left:3px solid #3B82F6;padding:7px 12px;color:#334E68;}
+  .how-step b {color:#1E40AF;margin-right:5px;}
+  .caution {background:#FFF7ED;border-left:4px solid #D97706;border-radius:8px;padding:12px 15px;color:#713F12;margin-top:14px;}
+  .dataset-banner {background:#ECFDF5;border:1px solid #A7F3D0;border-radius:14px;padding:15px 18px;color:#065F46;margin:6px 0 16px;}
+  .start-card {background:white;border:1px dashed #93B4E8;border-radius:16px;padding:22px 24px;margin-top:12px;}
+  .start-card h3 {margin-top:0;}
+  .start-card code {background:#EEF4FF;color:#1E3A8A;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere;}
+  [data-testid="stMetric"] {background:white;border:1px solid #D7E2F2;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.04);}
+  [data-testid="stVerticalBlockBorderWrapper"] {background:white;border-color:#D7E2F2!important;border-radius:16px;}
+  div[data-baseweb="select"] > div, div[data-baseweb="input"] > div {background:white!important;color:#172B4D!important;min-height:46px;}
+  .stButton button,.stDownloadButton button,.stLinkButton a {min-height:44px;border-radius:10px;font-weight:700;transition:transform .16s ease,box-shadow .16s ease;}
+  .stButton button:hover,.stDownloadButton button:hover,.stLinkButton a:hover {transform:translateY(-1px);box-shadow:0 5px 12px rgba(30,64,175,.14);}
+  button:focus-visible,a:focus-visible,input:focus-visible {outline:3px solid #93C5FD!important;outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce) {* {scroll-behavior:auto!important;transition:none!important;}}
+  @media (max-width:800px) {
+    .block-container {padding:1rem .9rem 2rem;}
+    .course-hero {padding:22px 20px;border-radius:15px;}
+    .method-card {padding:20px 18px;}
+    .guide-grid,.how-grid {grid-template-columns:1fr;}
+    .lab-pill {display:block;margin-right:0;}
+  }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("Data Mining & Machine Learning Lab")
-st.caption("Central learner application · TGS-2020503264 · Python + Streamlit")
+st.markdown("""
+<section class="course-hero">
+  <span class="tag">TGS-2020503264 · CENTRAL LAB APP</span>
+  <h1>Data Mining &amp; Machine Learning Lab</h1>
+  <p>Understand the method, connect it to your lab, and turn mock data into evidence you can explain.</p>
+</section>
+""", unsafe_allow_html=True)
 
 
 @st.cache_data(show_spinner=False)
@@ -47,10 +96,15 @@ def read_upload(data: bytes, name: str) -> pd.DataFrame:
 
 
 def choose_data():
-    upload = st.sidebar.file_uploader("Upload a lab CSV or Excel file", type=["csv", "xlsx", "xls"])
+    st.sidebar.markdown('<div class="sidebar-kicker">STEP 2 · ADD LAB DATA</div>', unsafe_allow_html=True)
+    upload = st.sidebar.file_uploader(
+        "Upload CSV or Excel",
+        type=["csv", "xlsx", "xls"],
+        help="Use the mock dataset supplied in the lab folder. Your upload stays in this local Streamlit session.",
+    )
     if upload:
         return read_upload(upload.getvalue(), upload.name), upload.name
-    st.sidebar.info("Upload the mock dataset supplied in the current lab folder.")
+    st.sidebar.caption("Use the mock dataset supplied in the current lab folder.")
     return None, None
 
 
@@ -60,21 +114,99 @@ def require_data(df):
         st.stop()
 
 
-workflows = [
-    "Data audit & preparation", "Join & aggregate", "Regression", "Classification",
-    "Cross-validation", "Clustering", "Hierarchical clustering", "PCA & feature ranking",
-    "Association rules", "Anomaly detection",
-]
-workflow = st.sidebar.selectbox("Workflow", workflows)
+def preferred_index(columns, preferred: tuple[str, ...] = ()) -> int:
+    """Choose a beginner-friendly default without assuming every lab schema."""
+    names = list(columns)
+    for candidate in preferred:
+        if candidate in names:
+            return names.index(candidate)
+    return max(0, len(names) - 1)
+
+
+def render_method_guide(guide: WorkflowGuide) -> None:
+    lab_pills = "".join(
+        f'<span class="lab-pill">Lab {escape(lab.number)} · {escape(lab.title)}</span>'
+        for lab in guide.labs
+    )
+    steps = "".join(
+        f'<div class="how-step"><b>{index}</b>{escape(step)}</div>'
+        for index, step in enumerate(guide.steps, start=1)
+    )
+    st.markdown(
+        f"""
+        <section class="method-card">
+          <div class="method-eyebrow">{escape(guide.eyebrow)}</div>
+          <h2>{escape(guide.title)}</h2>
+          <p class="method-summary">{escape(guide.summary)}</p>
+          <div class="guide-grid">
+            <div class="guide-item"><strong>Use it when</strong><span>{escape(guide.use_when)}</span></div>
+            <div class="guide-item"><strong>How it works</strong><span>{escape(guide.mechanism)}</span></div>
+            <div class="guide-item"><strong>Evidence to keep</strong><span>{escape(guide.evidence)}</span></div>
+          </div>
+          <div class="lab-strip"><strong>Used in these course labs</strong><br>{lab_pills}</div>
+          <div class="section-kicker">METHOD IN THREE MOVES</div>
+          <div class="how-grid">{steps}</div>
+          <div class="caution"><strong>Interpretation check:</strong> {escape(guide.caution)}</div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+workflows = list(WORKFLOW_GUIDES)
+st.sidebar.markdown('<div class="sidebar-kicker">STEP 1 · CHOOSE A METHOD</div>', unsafe_allow_html=True)
+workflow = st.sidebar.selectbox(
+    "Analysis method",
+    workflows,
+    help="Choose the workflow named in your lab guide.",
+)
+guide = WORKFLOW_GUIDES[workflow]
 df, filename = choose_data()
-st.sidebar.markdown("[Course registration](https://www.tertiarycourses.com.sg/wsq-data-mining-and-machine-learning-fundamentals-for-beginners.html)")
+st.sidebar.markdown('<div class="sidebar-kicker">LAB CONNECTION</div>', unsafe_allow_html=True)
+for lab in guide.labs:
+    st.sidebar.markdown(f"**Lab {lab.number}** · {lab.title}")
+    st.sidebar.caption(f"{lab.folder}/{lab.data}")
+st.sidebar.link_button(
+    "Course registration",
+    "https://www.tertiarycourses.com.sg/wsq-data-mining-and-machine-learning-fundamentals-for-beginners.html",
+    use_container_width=True,
+)
+
+render_method_guide(guide)
 
 if df is not None:
-    st.success(f"Loaded **{filename}** · {len(df):,} rows × {len(df.columns)} columns")
+    missing_cells = int(df.isna().sum().sum())
+    st.markdown(
+        f'<div class="dataset-banner"><strong>Dataset ready:</strong> {escape(filename)} · '
+        f'{len(df):,} rows · {len(df.columns)} columns · {missing_cells:,} missing cells</div>',
+        unsafe_allow_html=True,
+    )
+    with st.expander("Preview the uploaded dataset"):
+        st.dataframe(df.head(20), use_container_width=True)
+else:
+    lab_paths = "<br>".join(
+        f'<code>labs/{escape(lab.folder)}/{escape(lab.data)}</code>' for lab in guide.labs
+    )
+    st.markdown(
+        f"""
+        <section class="start-card">
+          <div class="section-kicker">READY TO BEGIN</div>
+          <h3>Upload the dataset for your current lab</h3>
+          <p>Find the supplied mock data at:</p>
+          <p>{lab_paths}</p>
+          <p>Then use <strong>Step 2</strong> in the sidebar. The analysis controls will appear here after the file is validated.</p>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.stop()
+
+st.markdown('<div class="section-kicker">ANALYSIS WORKSPACE</div>', unsafe_allow_html=True)
+st.subheader("Configure and run")
+st.caption("Use the settings specified in your lab guide, run the method, then retain the requested evidence and interpretation.")
 
 if workflow == "Data audit & preparation":
     require_data(df)
-    st.header("Data audit & preparation")
     a, b, c = st.columns(3)
     a.metric("Rows", f"{len(df):,}"); b.metric("Columns", len(df.columns)); c.metric("Missing cells", int(df.isna().sum().sum()))
     st.dataframe(df.head(30), use_container_width=True)
@@ -95,8 +227,7 @@ if workflow == "Data audit & preparation":
 
 elif workflow == "Join & aggregate":
     require_data(df)
-    st.header("Join & aggregate")
-    second = st.file_uploader("Upload the second table", type=["csv", "xlsx", "xls"], key="second")
+    second = st.file_uploader("Upload the second table", type=["csv", "xlsx", "xls"], key="second", help="For Lab 03, upload customers.csv after orders.csv is already loaded in the sidebar.")
     if second:
         right = read_upload(second.getvalue(), second.name)
         common = sorted(set(df.columns) & set(right.columns))
@@ -112,12 +243,19 @@ elif workflow == "Join & aggregate":
             st.plotly_chart(px.bar(agg, x=cat, y="sum", title=f"Sum of {val} by {cat}"), use_container_width=True)
 
 elif workflow == "Regression":
-    require_data(df); st.header("Regression")
+    require_data(df)
     nums = numeric_columns(df)
-    target = st.selectbox("Numeric target", nums)
-    features = st.multiselect("Features", [c for c in df.columns if c != target], default=[c for c in nums if c != target][:4])
-    model = st.selectbox("Model", ["Linear", "Ridge", "Lasso"]); alpha = st.slider("Regularisation α", 0.01, 10.0, 1.0)
-    if st.button("Train regression model", type="primary") and features:
+    target = st.selectbox("1. Numeric target to predict", nums, index=preferred_index(nums, ("price_sgd", "price", "monthly_spend")), help="Choose the continuous outcome, such as price_sgd.")
+    features = st.multiselect("2. Input features", [c for c in df.columns if c != target], default=[c for c in nums if c != target][:4], help="Choose columns available at prediction time. Avoid target leakage.")
+    model = st.selectbox("3. Regression model", ["Linear", "Ridge", "Lasso"], help="Linear is the baseline. Ridge and Lasso add regularisation to reduce overfitting.")
+    model_notes = {
+        "Linear": "Linear regression fits one weighted line or plane through the feature space. Start here for a transparent baseline.",
+        "Ridge": "Ridge shrinks large coefficients toward zero, which can stabilise a model when features overlap or overfit.",
+        "Lasso": "Lasso can shrink some coefficients exactly to zero, creating a simpler model that uses fewer features.",
+    }
+    st.info(model_notes[model])
+    alpha = st.slider("4. Regularisation strength (alpha)", 0.01, 10.0, 1.0, disabled=model == "Linear", help="Higher alpha means stronger coefficient shrinkage. It applies only to Ridge and Lasso.")
+    if st.button("Train regression model", type="primary", disabled=not features, use_container_width=True):
         result = run_regression(df, target, features, model, alpha=alpha)
         cols = st.columns(3)
         for box, (name, value) in zip(cols, result.metrics.items()): box.metric(name, f"{value:.4f}")
@@ -125,11 +263,12 @@ elif workflow == "Regression":
         st.dataframe(result.predictions, use_container_width=True)
 
 elif workflow == "Classification":
-    require_data(df); st.header("Classification")
-    target = st.selectbox("Target class", df.columns)
-    features = st.multiselect("Features", [c for c in df.columns if c != target], default=[c for c in numeric_columns(df) if c != target][:5])
-    model = st.selectbox("Classifier", ["Logistic Regression", "K-Nearest Neighbours", "Decision Tree", "Random Forest", "Support Vector Machine"])
-    if st.button("Train classifier", type="primary") and features:
+    require_data(df)
+    target = st.selectbox("1. Target class", df.columns, index=preferred_index(df.columns, ("diagnosis", "churned", "target")))
+    features = st.multiselect("2. Input features", [c for c in df.columns if c != target], default=[c for c in numeric_columns(df) if c != target][:5])
+    model = st.selectbox("3. Classifier", ["Logistic Regression", "K-Nearest Neighbours", "Decision Tree", "Random Forest", "Support Vector Machine"])
+    st.caption("Compare models on the same target, features and evidence. The best choice depends on error costs, stability and interpretability—not accuracy alone.")
+    if st.button("Train classifier", type="primary", disabled=not features, use_container_width=True):
         result = run_classification(df, target, features, model)
         cols = st.columns(len(result.metrics))
         for box, (name, value) in zip(cols, result.metrics.items()): box.metric(name, f"{value:.3f}")
@@ -139,18 +278,18 @@ elif workflow == "Classification":
         st.dataframe(result.predictions, use_container_width=True)
 
 elif workflow == "Cross-validation":
-    require_data(df); st.header("K-fold cross-validation")
-    target = st.selectbox("Target class", df.columns)
-    features = st.multiselect("Features", [c for c in df.columns if c != target], default=[c for c in numeric_columns(df) if c != target][:5])
-    model = st.selectbox("Classifier", ["Logistic Regression", "K-Nearest Neighbours", "Decision Tree", "Random Forest", "Support Vector Machine"])
-    folds = st.slider("Folds", 3, 10, 5)
-    if st.button("Run cross-validation", type="primary") and features:
+    require_data(df)
+    target = st.selectbox("1. Target class", df.columns, index=preferred_index(df.columns, ("diagnosis", "churned", "target")))
+    features = st.multiselect("2. Input features", [c for c in df.columns if c != target], default=[c for c in numeric_columns(df) if c != target][:5])
+    model = st.selectbox("3. Classifier", ["Logistic Regression", "K-Nearest Neighbours", "Decision Tree", "Random Forest", "Support Vector Machine"])
+    folds = st.slider("4. Number of folds", 3, 10, 5)
+    if st.button("Run cross-validation", type="primary", disabled=not features, use_container_width=True):
         scores = cross_validate_classifier(df, target, features, model, folds)
         st.metric("Mean accuracy", f"{scores.accuracy.mean():.3f} ± {scores.accuracy.std():.3f}")
         st.plotly_chart(px.bar(scores, x="fold", y="accuracy", range_y=[0, 1], title="Accuracy by fold"), use_container_width=True)
 
 elif workflow == "Clustering":
-    require_data(df); st.header("K-means clustering & silhouette analysis")
+    require_data(df)
     nums = numeric_columns(df); features = st.multiselect("Numeric features", nums, default=nums[:3])
     if len(features) >= 2:
         scan = silhouette_scan(df, features); st.plotly_chart(px.line(scan, x="k", y="silhouette", markers=True, title="Choose k at the strongest valid silhouette score"), use_container_width=True)
@@ -160,7 +299,7 @@ elif workflow == "Clustering":
         st.download_button("Download clustered data", clustered.to_csv(index=False).encode(), "clustered_data.csv", "text/csv")
 
 elif workflow == "Hierarchical clustering":
-    require_data(df); st.header("Hierarchical clustering")
+    require_data(df)
     nums = numeric_columns(df); features = st.multiselect("Numeric features", nums, default=nums[:4])
     clusters = st.slider("Clusters to cut", 2, min(8, max(2, len(df)-1)), 2)
     if len(features) >= 2:
@@ -170,7 +309,7 @@ elif workflow == "Hierarchical clustering":
         st.plotly_chart(px.scatter(clustered, x=features[0], y=features[1], color="cluster", title="Selected cluster cut"), use_container_width=True)
 
 elif workflow == "PCA & feature ranking":
-    require_data(df); st.header("Dimension reduction & feature ranking")
+    require_data(df)
     mode = st.radio("Analysis", ["Principal Component Analysis", "Feature ranking"], horizontal=True)
     if mode == "Principal Component Analysis":
         nums = numeric_columns(df); features = st.multiselect("Numeric features", nums, default=nums[:6])
@@ -181,22 +320,23 @@ elif workflow == "PCA & feature ranking":
             if len(projected.columns) >= 2: st.plotly_chart(px.scatter(projected, x="PC1", y="PC2", title="Projection onto first two components"), use_container_width=True)
             st.subheader("Component loadings"); st.dataframe(loadings.style.background_gradient(cmap="GnBu"), use_container_width=True)
     else:
-        target = st.selectbox("Target class", df.columns); features = st.multiselect("Candidate features", [c for c in df.columns if c != target], default=[c for c in numeric_columns(df) if c != target][:8])
-        if st.button("Rank features", type="primary") and features:
+        target = st.selectbox("Target class", df.columns, index=preferred_index(df.columns, ("diagnosis", "churned", "target"))); features = st.multiselect("Candidate features", [c for c in df.columns if c != target], default=[c for c in numeric_columns(df) if c != target][:8])
+        if st.button("Rank features", type="primary", disabled=not features, use_container_width=True):
             ranking = feature_ranking(df, target, features); st.plotly_chart(px.bar(ranking, x="importance", y="feature", orientation="h", title="Permutation importance"), use_container_width=True); st.dataframe(ranking)
 
 elif workflow == "Association rules":
-    require_data(df); st.header("Frequent itemsets & association rules")
+    require_data(df)
     tx = st.selectbox("Transaction ID", df.columns); item = st.selectbox("Item", [c for c in df.columns if c != tx])
     support = st.slider("Minimum support", 0.01, 0.80, 0.10); confidence = st.slider("Minimum confidence", 0.10, 1.00, 0.50)
-    if st.button("Mine rules", type="primary"):
+    if st.button("Mine rules", type="primary", use_container_width=True):
         itemsets, rules = mine_association_rules(df, tx, item, support, confidence)
         st.subheader("Frequent itemsets"); st.dataframe(itemsets, use_container_width=True)
         st.subheader("Rules"); st.dataframe(rules[["antecedents", "consequents", "support", "confidence", "lift"]] if not rules.empty else rules, use_container_width=True)
 
 elif workflow == "Anomaly detection":
-    require_data(df); st.header("Anomaly detection")
-    col = st.selectbox("Numeric measure", numeric_columns(df)); method = st.radio("Method", ["Z-score", "IQR"], horizontal=True)
+    require_data(df)
+    anomaly_nums = numeric_columns(df)
+    col = st.selectbox("Numeric measure", anomaly_nums, index=preferred_index(anomaly_nums, ("temperature", "value", "reading"))); method = st.radio("Method", ["Z-score", "IQR"], horizontal=True)
     default = 3.0 if method == "Z-score" else 1.5; threshold = st.slider("Threshold", 0.5, 5.0, default)
     result = detect_anomalies(df[col], method, threshold); view = df.copy(); view["score"] = result.score; view["is_anomaly"] = result.is_anomaly
     st.metric("Flagged rows", int(view.is_anomaly.sum()))

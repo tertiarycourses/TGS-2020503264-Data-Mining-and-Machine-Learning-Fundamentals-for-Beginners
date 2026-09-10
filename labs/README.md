@@ -2,6 +2,10 @@
 
 All labs use the central `app.py` Streamlit application. Each folder is self-contained and includes mock data.
 
+## Open the central app
+
+The app is shared across all 15 labs and lives at the root of the [course repository](https://github.com/tertiarycourses/TGS-2020503264-Data-Mining-and-Machine-Learning-Fundamentals-for-Beginners). Download or clone the complete repository—not an individual lab folder—then run `streamlit run app.py` and open `http://localhost:8501`. The method selector explains the technique and shows which labs and mock datasets use it.
+
 - [Lab 01 — Data audit and business question](lab-01-audit-business-data/README.md)
 - [Lab 02 — Clean, impute, and export](lab-02-clean-impute-export/README.md)
 - [Lab 03 — Filter, join, and aggregate](lab-03-filter-join-aggregate/README.md)

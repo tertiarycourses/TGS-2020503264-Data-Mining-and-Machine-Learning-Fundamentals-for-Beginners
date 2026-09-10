@@ -43,7 +43,7 @@ python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Open `http://localhost:8501`, choose the workflow named in the lab guide, and upload that lab's mock data.
+Open `http://localhost:8501`, choose the workflow named in the lab guide, and upload that lab's mock data. Each workflow first explains when to use the method, how it works, what evidence to keep, common interpretation risks, and the exact labs that use it.
 
 ## Labs
 
