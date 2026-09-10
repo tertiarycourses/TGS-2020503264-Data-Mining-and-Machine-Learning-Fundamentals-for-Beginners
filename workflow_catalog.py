@@ -150,4 +150,3 @@ WORKFLOW_GUIDES: dict[str, WorkflowGuide] = {
         labs=(LabReference("15", "Detect and explain anomalies", "lab-15-anomaly-evidence", "sensor_readings.csv"),),
     ),
 }
-
